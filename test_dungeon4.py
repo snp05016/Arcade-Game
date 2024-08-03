@@ -1,4 +1,4 @@
-from dungeon4 import (
+from dungeon import (
     load_map,
     find_start,
     display_map,
