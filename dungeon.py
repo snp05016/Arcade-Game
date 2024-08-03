@@ -1,10 +1,13 @@
 import json
 from os import system,name
-
+import time
 MAP_FILE = 'cave_map.txt'
 HELP_FILE = 'help.txt'
 SAVE_FILE = 'save_game.json'
-
+def clear():
+    """Clears the screen."""
+    if name == 'nt':
+        _ = system('cls')
 def load_map(map_file: str) -> list[list[str]]:
     """Loads a map from a file as a grid (list of lists)."""
     with open(map_file, 'r') as file:
@@ -29,10 +32,10 @@ def display_map(grid: list[list[str]], player_position: list[int], inventory: li
     grid_copy[x][y] = '🧝'
     
     emoji_map = {'-': '🧱', '*': '🟢', 'S': '🏠', 'F': '🏺', 'I': '🗝️'}
-    
+    print()
     for row in grid_copy:
         print("".join(emoji_map.get(cell, cell) for cell in row))
-    
+    print()
     print(f"Inventory: {', '.join(inventory) if inventory else 'Empty'}")
 
 def get_grid_size(grid: list[list[str]]) -> list[int]:
@@ -110,10 +113,13 @@ def main():
     player_position = find_start(grid)
     inventory = []
     score = 0
-    
+    print('Welcome to the game!')
+    time.sleep(2)
+    print()
+    print(f"This is the {MAP_FILE[0].upper()}{MAP_FILE[1:len(MAP_FILE)-8]} map")
+    time.sleep(2)
+    clear()
     display_map(grid, player_position, inventory)
-    
-    print('The starting position is:', player_position)
     print('You can go', ', '.join(look_around(grid, player_position)))
     
     while True:
@@ -128,7 +134,7 @@ def main():
             direction = command.split()[1]
             if move(direction, player_position, grid):
                 print(f'You have moved {direction}')
-
+                clear()
                 display_map(grid, player_position, inventory)
                 if grid[player_position[0]][player_position[1]] == 'I':
                     print('You found an item!')
@@ -145,6 +151,8 @@ def main():
                 print('There is no way here')
                 print('You can go', ', '.join(look_around(grid, player_position)))
         elif command == 'help':
+            clear()
+            display_map(grid, player_position, inventory)
             display_help()
         elif command == 'save':
             save_game(player_position, inventory, grid)
@@ -152,6 +160,8 @@ def main():
             player_position, inventory, grid = load_game()
             display_map(grid, player_position, inventory)
         else:
+            clear()
+            display_map(grid, player_position, inventory)
             print("I do not understand.")
             print('You can go', ', '.join(look_around(grid, player_position)))
 
